@@ -117,6 +117,8 @@ export class AppComponent {
 
 
 
+  
+
   onGenerateMasking() {
     console.log(this.signUpForm.get('displayformat').value);
     const str = this.signUpForm.get('displayformat').value
