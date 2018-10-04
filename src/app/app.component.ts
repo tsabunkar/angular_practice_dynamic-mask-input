@@ -23,6 +23,8 @@ export class AppComponent {
     this.signUpForm = new FormGroup({
       displayformat: new FormControl(),
       startingnumber: new FormControl(),
+      /*  quantitynumber: new FormControl(),
+       incrementnumber: new FormControl(), */
     });
 
   }
@@ -209,22 +211,73 @@ export class AppComponent {
 
         if (element.charAt(0) === '#') {//this element must be replcaed with Starting number 
           //but starting number length shld match with display format hashes
-          let startingNumberWithDisplayFormat = this.replaceHashesWithStartingNumber(startingNumberControl, element);
-          console.log(startingNumberWithDisplayFormat);
+          let validStartingNumber = this.replaceHashesWithStartingNumber(startingNumberControl, element);
+          //validStartingNumber-> Some number
+
+          console.log(validStartingNumber);
           //!now need to generate array of vouchers with number of times quanity -> listOfVouchers
           //!listOfVouchers is cotains only number this should be appended or prepended or both as per display format 
           //!(i.e- replace hashes with this this array -> my final array :) )
+
+          if (validStartingNumber != null) {
+
+
+
+            let quantityVal: number = 10;
+            let incrementVal: number = 1;
+
+
+            let generateAllVouchers = (): string[] => {//this array will generate all vouchers
+
+              let vouchersArray: string[] = new Array<string>(quantityVal);
+              for (let index = 0; index < quantityVal; index++) {
+                vouchersArray[index] = validStartingNumber + incrementVal * index;
+                console.log(' vouchersArray[index]', vouchersArray[index]);
+              }
+              return vouchersArray;
+            }
+
+            let vouchersArray = generateAllVouchers();
+
+            console.log('Before appending or prepending', vouchersArray);
+
+            let q: string = displayFormatControl
+
+            let q1Array: string[] = q.split("-");
+
+            for (let index = 0; index < q1Array.length; index++) {
+
+              if (q1Array[index].charAt(0) === '#') {
+                q1Array[index] = '#';
+              }
+
+            }
+
+            let q22 = q1Array.join('-');
+            console.log('q22', q22);
+
+            // let newVouchersArray: string[] = new Array<string>(quantityVal);
+
+            for (let index = 0; index < quantityVal; index++) {
+              console.log('====', q22.replace('#', validStartingNumber + incrementVal * index));
+              // newVouchersArray.push(s.replace('#', validStartingNumber + incrementVal * index));
+              // vouchersArray[index] = validStartingNumber + incrementVal * index;
+            }
+
+            console.log(q22);
+
+
+            console.log('After appending or prepending', vouchersArray);
+
+          }//end of if()
+
+
         }
 
       })
     }
 
   }
-
-
-
-
-
 
 
 
