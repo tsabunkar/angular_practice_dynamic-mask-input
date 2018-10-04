@@ -117,58 +117,40 @@ export class AppComponent {
 
   }
 
-  checkAllSameHashCharacter = (ele: string) => {
+  checkAllSameHashCharacter = (element: string) => {
 
-    let c1 = ele.charAt(0);
+    let c1 = element.charAt(0);
     if (c1 !== '#') { //first character must be '#'
       return false;
     }
-    for (let i = 1; i < ele.length; i++) {
-      let temp = ele.charAt(i);
+    for (let i = 1; i < element.length; i++) {
+      let temp = element.charAt(i);
       if (c1 !== temp) {
-        //if chars does NOT match, 
-        //just return false from here itself,
-        //there is no need to verify other chars
+        //if chars does NOT match, just return false from here itself, there is no need to verify other chars
         return false;
       }
     }
-    //As it did NOT return from above if (inside for)
-    //it means, all chars matched, so return true
+    //As it did NOT return from above if (inside for) it means, all chars matched, so return true
     return true;
 
   }
 
 
-  replaceHashesWithStartingNumber = (startingNumberControl, hashes: string) => {
 
-    if (startingNumberControl.toString().length === hashes.length) { //length of startingNumberControl is same as lastElem masked # from displayformat
-      //so no need of appending zeores
+  validateStartingNumberWithDisplayFormat = (startingNumberControl, hashes: string) => {
+
+    if (startingNumberControl.toString().length === hashes.length) { //length of startingNumberControl is same as lastElem masked # from displayformat so no need of appending zeores
       console.log('Valid starting number and display format');
-      //!task is to generate vouchers with prefix of character other than #
-      // logicToGenerateVoucher();
       hashes = startingNumberControl;
       return hashes;
 
     }
     else if (startingNumberControl.toString().length < hashes.length) {//toString() -> To get the length of number entered in startingNumberControl field
       console.log('need to append zeros at front');
-
-      let numberOfZeroesToAppend = hashes.length - startingNumberControl.toString().length;
-      console.log(numberOfZeroesToAppend);
-
-      var appendedZeroesStartingNumber = startingNumberControl + "";
-      while (numberOfZeroesToAppend != 0) {
-        appendedZeroesStartingNumber = "0" + appendedZeroesStartingNumber;
-        numberOfZeroesToAppend--;
-      }
-
-      console.log('++');
-      console.log(appendedZeroesStartingNumber);
-
+      let startingNumberControlString = startingNumberControl.toString();
+      let appendedZeroesStartingNumber = startingNumberControlString.padStart(hashes.length, '0');
       hashes = appendedZeroesStartingNumber;
-
       return hashes;
-
 
     } else {
       //need to change the starting number length as it is greater than lastElem masked # from displayformat
@@ -177,10 +159,50 @@ export class AppComponent {
       return null
     }
 
-
   }
 
 
+  removeMulipleHashesToSingleHashInString = (displayFormatControl): string => {
+    let displayFormatSubStringArray: string[] = displayFormatControl.split("-");
+
+    for (let index = 0; index < displayFormatSubStringArray.length; index++) { //to remove substring which contains multiple hashes with single hash
+      if (displayFormatSubStringArray[index].charAt(0) === '#') {
+        displayFormatSubStringArray[index] = '#';
+      }
+    }
+
+    return displayFormatSubStringArray.join('-');
+  }
+
+
+
+  /*   generateVouchers = (displayFormatStringWithSingleHash,startingNumberControl ) => {
+      let numberOfZeroesToBeAppendToVouchers: number = element.length - startingNumberControl.toString().length;
+  
+      for (let index = 0; index < quantityVal; index++) {
+  
+        if (numberOfZeroesToBeAppendToVouchers === 0) {
+          let eachVoucherNumber: string = validSingleStartingNumber + incrementVal * index;//validSingleStartingNumber-> string  ('12'+2*3)-> "126"
+  
+          if (eachVoucherNumber.toString().length == element.length) {// if display format is ### and starting number 999 then increment by 1-> 1000 which means starting number is exceeding the length of display format
+            console.log('====', displayFormatStringWithSingleHash.replace('#', eachVoucherNumber.toString()));
+          }
+          else {
+            console.log('%%%%', 'while generating vouchers the length of voucher number exceeded the display format');
+            break;
+          }
+  
+        }
+        else if (numberOfZeroesToBeAppendToVouchers > 0) {
+          let eachVoucherNumber: number = +validSingleStartingNumber + incrementVal * index; //validSingleStartingNumber -> number
+          let eachVoucherNumberString: string = eachVoucherNumber.toString();
+          let vouchersNumberWithAppendedZeroes = eachVoucherNumberString.padStart(element.length, '0');
+          console.log('****', displayFormatStringWithSingleHash.replace('#', vouchersNumberWithAppendedZeroes));
+  
+        }
+  
+      }
+    } */
 
 
   generateVouchersWithOutMasking2() {
@@ -188,86 +210,68 @@ export class AppComponent {
     let displayFormatControl = this.signUpForm.get('displayformat').value;
     let startingNumberControl = +this.signUpForm.get('startingnumber').value;
 
-    let resultantArray_ElementSplitedWithHiphen: string[] = displayFormatControl.split("-");
+    let resultantArray_ElementSplitedWithHiphen_DisplayFormat: string[] = displayFormatControl.split("-");
 
-    console.log('resultantArray_ElementSplitedWithHiphen', resultantArray_ElementSplitedWithHiphen);
+    console.log('resultantArray_ElementSplitedWithHiphen', resultantArray_ElementSplitedWithHiphen_DisplayFormat);
 
     let doesDisplayFormatHasValidHashes: boolean = false;
 
-    resultantArray_ElementSplitedWithHiphen.forEach((element: string) => {
-      console.log(element);
+    resultantArray_ElementSplitedWithHiphen_DisplayFormat.forEach((displayFormateSubStringElem: string) => {
+      console.log(displayFormateSubStringElem);
 
-      if (element.charAt(0) === '#') {//first character must be '#', if so then only goto allSameCharacter() func
-        doesDisplayFormatHasValidHashes = this.checkAllSameHashCharacter(element);
+      if (displayFormateSubStringElem.charAt(0) === '#') {//first character must be '#', if so then only goto allSameCharacter() func
+        doesDisplayFormatHasValidHashes = this.checkAllSameHashCharacter(displayFormateSubStringElem);
       }
 
     })
 
-    console.log(doesDisplayFormatHasValidHashes);
+    console.log('doesDisplayFormatHasValidHashes', doesDisplayFormatHasValidHashes);
 
     if (doesDisplayFormatHasValidHashes) {//true
-      console.log(resultantArray_ElementSplitedWithHiphen);
-      resultantArray_ElementSplitedWithHiphen.forEach((element: string) => {
-
-        if (element.charAt(0) === '#') {//this element must be replcaed with Starting number 
-          //but starting number length shld match with display format hashes
-          let validStartingNumber = this.replaceHashesWithStartingNumber(startingNumberControl, element);
-          //validStartingNumber-> Some number
-
-          console.log(validStartingNumber);
-          //!now need to generate array of vouchers with number of times quanity -> listOfVouchers
-          //!listOfVouchers is cotains only number this should be appended or prepended or both as per display format 
-          //!(i.e- replace hashes with this this array -> my final array :) )
-
-          if (validStartingNumber != null) {
+      console.log(resultantArray_ElementSplitedWithHiphen_DisplayFormat);
 
 
+      resultantArray_ElementSplitedWithHiphen_DisplayFormat.forEach((displayFormateSubStringElem: string) => {
+
+        if (displayFormateSubStringElem.charAt(0) === '#') {//this element must be replcaed with Starting number  but starting number length shld match with display format hashes
+          let validSingleStartingNumber = this.validateStartingNumberWithDisplayFormat(startingNumberControl, displayFormateSubStringElem);
+
+          console.log('validSingleStartingNumber', validSingleStartingNumber);
+          if (validSingleStartingNumber != null) {
 
             let quantityVal: number = 10;
             let incrementVal: number = 1;
 
+            console.log('Before appending or prepending');
 
-            let generateAllVouchers = (): string[] => {//this array will generate all vouchers
+            let displayFormatStringWithSingleHash = this.removeMulipleHashesToSingleHashInString(displayFormatControl);
 
-              let vouchersArray: string[] = new Array<string>(quantityVal);
-              for (let index = 0; index < quantityVal; index++) {
-                vouchersArray[index] = validStartingNumber + incrementVal * index;
-                console.log(' vouchersArray[index]', vouchersArray[index]);
-              }
-              return vouchersArray;
-            }
-
-            let vouchersArray = generateAllVouchers();
-
-            console.log('Before appending or prepending', vouchersArray);
-
-            let q: string = displayFormatControl
-
-            let q1Array: string[] = q.split("-");
-
-            for (let index = 0; index < q1Array.length; index++) {
-
-              if (q1Array[index].charAt(0) === '#') {
-                q1Array[index] = '#';
-              }
-
-            }
-
-            let q22 = q1Array.join('-');
-            console.log('q22', q22);
-
-            // let newVouchersArray: string[] = new Array<string>(quantityVal);
+            let numberOfZeroesToBeAppendToVouchers: number = displayFormateSubStringElem.length - startingNumberControl.toString().length;
 
             for (let index = 0; index < quantityVal; index++) {
-              console.log('====', q22.replace('#', validStartingNumber + incrementVal * index));
-              // newVouchersArray.push(s.replace('#', validStartingNumber + incrementVal * index));
-              // vouchersArray[index] = validStartingNumber + incrementVal * index;
+
+              if (numberOfZeroesToBeAppendToVouchers === 0) {
+                let eachVoucherNumber: string = validSingleStartingNumber + incrementVal * index;//validSingleStartingNumber-> string  ('12'+2*3)-> "126"
+
+                if (eachVoucherNumber.toString().length == displayFormateSubStringElem.length) {// if display format is ### and starting number 999 then increment by 1-> 1000 which means starting number is exceeding the length of display format
+                  console.log('====', displayFormatStringWithSingleHash.replace('#', eachVoucherNumber.toString()));
+                }
+                else {
+                  console.log('%%%%', 'while generating vouchers the length of voucher number exceeded the display format');
+                  break;
+                }
+
+              }
+              else if (numberOfZeroesToBeAppendToVouchers > 0) {
+                let eachVoucherNumber: number = +validSingleStartingNumber + incrementVal * index; //validSingleStartingNumber -> number
+                let eachVoucherNumberString: string = eachVoucherNumber.toString();
+                let vouchersNumberWithAppendedZeroes = eachVoucherNumberString.padStart(displayFormateSubStringElem.length, '0');
+                console.log('****', displayFormatStringWithSingleHash.replace('#', vouchersNumberWithAppendedZeroes));
+
+              }
+
             }
-
-            console.log(q22);
-
-
-            console.log('After appending or prepending', vouchersArray);
+            console.log('After appending or prepending');
 
           }//end of if()
 
@@ -278,6 +282,9 @@ export class AppComponent {
     }
 
   }
+
+
+  //------------------------------------------------------------------------------
 
 
 
