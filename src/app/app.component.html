@@ -1,80 +1,21 @@
-<!--! My new logic :) -->
-
-<!-- <form [formGroup]="signUpForm">
-  Display format : <input type="text" (keypress)="_keyPress($event)" formControlName="displayformat">
-
-  <br>
-  <button (click)="onGenerateMasking()">
-    Mask
-  </button>
-  <br>
-
-  Starting Number :<input type="text" [textMask]="{mask: mask2}" formControlName="startingnumber">
-
-  <br>
-  <button (click)="generateVouchersWithMasking()">
-    Generate
-  </button>
-
-</form> -->
-
-
-<!-- !My logic 2 which is generic -->
-
-<!-- <form [formGroup]="signUpForm">
-  Display format : <input type="text" (keypress)="_keyPress($event)" formControlName="displayformat">
-
-  <br>
-  <button (click)="onGenerateMaskingGenericLogic()">
-    Mask
-  </button>
-  <br>
-
-  Starting Number :<input type="text" [textMask]="{mask: mask2}" formControlName="startingnumber">
-
-  <br>
-  <button (click)="generateVouchersWithMaskingGenericLogic()">
-    Generate
-  </button>
-
-</form> -->
-
-
-
-<!--! As per requirment -->
-
 <form [formGroup]="signUpForm">
-  Display format : <input type="text" (keypress)="_keyPress($event)" formControlName="displayformat">
+  Display format : <input type="text" (keypress)="_displayFomratkeyPress($event)" formControlName="displayformat">
 
   <br>
   Starting Number :
   <input type="number" formControlName="startingnumber">
 
- <!--  <br>
+  <br>
   Quantity :
-  <input type="number" formControlName="quantitynumber">
+  <input type="number" formControlName="quantity">
 
   <br>
   Increment By :
-  <input type="number" formControlName="incrementnumber">
- -->
+  <input type="number" formControlName="incrementby">
+
   <br>
-  <button (click)="generateVouchersWithOutMasking2()">
+  <button (click)="onClickOfSequentialGenerateVouchers()">
     Generate
   </button>
 
 </form>
-
-
-
-
-
-<!-- ?Grabage code  -->
-
-<!-- <input [textMask]="{mask: mask}" [(ngModel)]="myModel" type="text" />
-<br>
-<input [textMask]="{mask: mask1}" [(ngModel)]="myModel1" type="text" />
-<br>
-<input [textMask]="{mask: mask2}" [(ngModel)]="myModel2" type="text" />
-
-<br> -->
