@@ -99,8 +99,6 @@ export class AppComponent {
   generateVouchersArray =
     (displayFormateSubStringElem, startingNumberControl, validSingleStartingNumber, displayFormatStringWithSingleHash): string[] => {
 
-      /* let quantityVal: number = 10;
-      let incrementVal: number = 1; */
 
       let quantityVal = +this.signUpForm.get('quantity').value;
       let incrementVal = +this.signUpForm.get('incrementby').value;
@@ -174,9 +172,104 @@ export class AppComponent {
   }
 
 
+
+  onClickOfSequentialGenerateVouchers2() {
+    let displayFormatControl = this.signUpForm.get('displayformat').value;
+    let startingNumberControl = +this.signUpForm.get('startingnumber').value;
+    let resultantArray_ElementSplitedWithHiphen_DisplayFormat: string[] = displayFormatControl.split("-");
+    console.log(resultantArray_ElementSplitedWithHiphen_DisplayFormat);
+
+    let countNumberOfSubStringContainingHashes: number = 0;
+    let substringWithHashes: string = null;
+
+    for (const itemString of resultantArray_ElementSplitedWithHiphen_DisplayFormat) {
+      // console.log(itemString);
+      if (itemString.search('#') !== -1) {
+        console.log('this string contains hashes:-', itemString);
+        countNumberOfSubStringContainingHashes++;
+        substringWithHashes = itemString;
+      }
+    }
+
+    console.log(countNumberOfSubStringContainingHashes);
+
+    if (countNumberOfSubStringContainingHashes === 1) { //contains only one substring with hashes
+      console.log('contains only one substring with hashes', substringWithHashes)
+
+      //now check if the substringWithHashes  contains all hashes or some hashes
+      let isAllCharactersAreHashesInString = this.checkAllSameHashCharacter(substringWithHashes)
+
+      if (isAllCharactersAreHashesInString) {
+        console.warn('All characters in the string are hashes', substringWithHashes);
+        //this scenario already done
+        this.onClickOfSequentialGenerateVouchers();
+
+      } else {
+        console.log('some characters in the string are hashes', substringWithHashes);
+        //now check if in this string in between any number or character exists other than hashes
+        //ex- ##f### , wd###ds###, etc , if so then this string would be invalid
+        //only valid strings r -> a####, ####b, a####b,  few#####23, ab-333####fnc-efef, 
+        let stratingIndexOfHash = substringWithHashes.indexOf('#');
+        let endingIndexOfHash = substringWithHashes.lastIndexOf('#');
+        console.log(stratingIndexOfHash, endingIndexOfHash);
+
+        let removedStartingCharAndEndingCharOfString = substringWithHashes.slice(stratingIndexOfHash, endingIndexOfHash + 1);
+        console.log(removedStartingCharAndEndingCharOfString);
+
+        let isAllCharactersAreHashesInStringOfSubString = this.checkAllSameHashCharacter(removedStartingCharAndEndingCharOfString);
+        console.log(isAllCharactersAreHashesInStringOfSubString);
+        if (isAllCharactersAreHashesInStringOfSubString) {//valid strings r -> a####, ####b, a####b,  few#####23, ab-333####fnc-efef, 
+          console.warn('contains chara or number at end of hashes ex- a####, ###b, a23###cd ', substringWithHashes)
+          console.log(resultantArray_ElementSplitedWithHiphen_DisplayFormat, substringWithHashes);
+          //check if numberofhashe character in substring is only one
+          if (stratingIndexOfHash === endingIndexOfHash) {//only one hash in substring (bcoz - both stratingIndexOfHash, endingIndexOfHash value would be same)
+            //ex- eef#eeg, #ef123, etc..
+            //!replace the single hash with vouhersArray
+
+
+            this.generateVouchersArrayWithPreAndPostCharaAndNo(resultantArray_ElementSplitedWithHiphen_DisplayFormat, substringWithHashes, startingNumberControl)
+
+          } else {//conatians 
+            //!remove multiple hashes to single hash
+            //!replace the single hash with vouhersArray
+          }
+
+
+        } else {//invalid strings -> ##f### , wd###ds###, etc ,
+          console.error('contains  character or number character in between hashes ex- ##f###');
+        }
+
+      }
+
+    } else {//contains multiple substring with hashes
+      console.error('contains multiple substring with hashes ex- ####-####');
+    }
+
+  }
+
+
+  generateVouchersArrayWithPreAndPostCharaAndNo = (resultantArray_ElementSplitedWithHiphen_DisplayFormat, substringWithHashes, startingNumberControl) => {
+
+    if (startingNumberControl.toString().length === 1) {
+
+    }
+
+  }
+
+
+
+
+
+
+
+
+
+
+  //!----------------------Non-Sequnetial--------------------------------
+
   _voucherNumberPress(event: Event) {
 
-    const pattern = /[0-9,]/;
+    const pattern = /[A-Za-z0-9,-]/;
     let inputChar = String.fromCharCode(event['charCode']);
 
     if (!pattern.test(inputChar)) { // invalid character, prevent input
@@ -186,13 +279,14 @@ export class AppComponent {
   }
 
 
-  removeEmptyElementsFromArray = (vouchersArray: string[]) => {
+  removeEmptyElementsFromArray = (vouchersArray: string[]): string[] => {
     let temp = [];
 
     for (let i of vouchersArray)
       i && temp.push(i); // copy each non-empty value to the 'temp' array
 
     vouchersArray = temp;
+    return vouchersArray;
   }
 
   onClickOfNonSequentialGenerateVouchers() {
@@ -201,11 +295,13 @@ export class AppComponent {
     console.log(vouchernumberControl);
 
     let vouchersArray: string[] = vouchernumberControl.split(',');
-    this.removeEmptyElementsFromArray(vouchersArray);
+    let filteredValidVouchersArray = this.removeEmptyElementsFromArray(vouchersArray);
 
     console.log(vouchersArray);
+    console.log(filteredValidVouchersArray);
 
   }
+
 
 
 }

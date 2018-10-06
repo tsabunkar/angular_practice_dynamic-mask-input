@@ -1,4 +1,5 @@
-<!-- <form [formGroup]="signUpForm">
+<!-- <h6>Sequential</h6>
+<form [formGroup]="signUpForm">
   Display format : <input type="text" (keypress)="_displayFomratkeyPress($event)" formControlName="displayformat">
 
   <br>
@@ -38,11 +39,14 @@
   </button>
 
 </form> -->
+<br>
+<hr>
+<h6>Non-Sequential</h6>
 
 <form [formGroup]="signUpForm">
 
   Voucher Number :
-  <input type="text" (keypress)="_voucherNumberPress($event)"  formControlName="vouchernumber">
+  <input type="text" (keypress)="_voucherNumberPress($event)" formControlName="vouchernumber">
 
   <br>
   <button (click)="onClickOfNonSequentialGenerateVouchers()">
@@ -50,3 +54,28 @@
   </button>
 
 </form>
+
+<br>
+<hr>
+<h6>Sequential New-Requirement</h6>
+<form [formGroup]="signUpForm">
+  Display format : <input type="text" (keypress)="_displayFomratkeyPress($event)" formControlName="displayformat">
+
+  <br>
+  Starting Number :
+  <input type="number" formControlName="startingnumber">
+
+  <br>
+  Quantity :
+  <input type="number" formControlName="quantity">
+
+  <br>
+  Increment By :
+  <input type="number" formControlName="incrementby">
+
+  <br>
+  <button (click)="onClickOfSequentialGenerateVouchers2()">
+    Generate
+  </button>
+
+</form> 
