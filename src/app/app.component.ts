@@ -18,6 +18,7 @@ export class AppComponent {
       startingnumber: new FormControl(),
       quantity: new FormControl(),
       incrementby: new FormControl(),
+      vouchernumber: new FormControl(),
 
     });
 
@@ -33,6 +34,7 @@ export class AppComponent {
     }
 
   }
+
 
 
 
@@ -172,7 +174,38 @@ export class AppComponent {
   }
 
 
+  _voucherNumberPress(event: Event) {
+
+    const pattern = /[0-9,]/;
+    let inputChar = String.fromCharCode(event['charCode']);
+
+    if (!pattern.test(inputChar)) { // invalid character, prevent input
+      event.preventDefault();
+    }
+
+  }
 
 
-  
+  removeEmptyElementsFromArray = (vouchersArray: string[]) => {
+    let temp = [];
+
+    for (let i of vouchersArray)
+      i && temp.push(i); // copy each non-empty value to the 'temp' array
+
+    vouchersArray = temp;
+  }
+
+  onClickOfNonSequentialGenerateVouchers() {
+    let vouchernumberControl = this.signUpForm.get('vouchernumber').value;
+
+    console.log(vouchernumberControl);
+
+    let vouchersArray: string[] = vouchernumberControl.split(',');
+    this.removeEmptyElementsFromArray(vouchersArray);
+
+    console.log(vouchersArray);
+
+  }
+
+
 }
