@@ -96,11 +96,12 @@ export class AppComponent {
   }
 
 
-  generateVouchersArrayReplaceHashWithVoucherNumber = (displayFormateSubStringElem, startingNumberControl, validSingleStartingNumber, displayFormatStringWithSingleHash): string[] => {
+  generateVouchersArray = (displayFormateSubStringElem, startingNumberControl, validSingleStartingNumber, displayFormatStringWithSingleHash): string[] => {
 
 
     let quantityVal = +this.signUpForm.get('quantity').value;
     let incrementVal = +this.signUpForm.get('incrementby').value;
+    // console.log(quantityVal, incrementVal);
 
     let numberOfZeroesToBeAppendToVouchers: number = displayFormateSubStringElem.length - startingNumberControl.toString().length;
     let vouchersArray: string[] = new Array<string>();
@@ -136,21 +137,18 @@ export class AppComponent {
   }
 
 
-  generateSequentialVouchersSeparatedWithHiphens(): string[] {
+  onClickOfSequentialGenerateVouchers() {
     let displayFormatControl = this.signUpForm.get('displayformat').value;
     let startingNumberControl = +this.signUpForm.get('startingnumber').value;
-
     let resultantArray_ElementSplitedWithHiphen_DisplayFormat: string[] = displayFormatControl.split("-");
     let doesDisplayFormatHasValidHashes: boolean = false;
-    // let vouchersArray: string[] = [];
-    let vouchersArray: string[] = new Array<string>();
 
     resultantArray_ElementSplitedWithHiphen_DisplayFormat.forEach((displayFormatSubStringElem: string) => {
 
       if (displayFormatSubStringElem.charAt(0) === '#') {//first character must be '#', if so then only goto allSameCharacter() func
         doesDisplayFormatHasValidHashes = this.checkAllSameHashCharacter(displayFormatSubStringElem);
       }
-    })
+    })//end of forEach();
 
     if (doesDisplayFormatHasValidHashes) {//true (display format has valid substring of hashes ex- ab-###-cd)
 
@@ -159,44 +157,31 @@ export class AppComponent {
         if (displayFormatSubStringElem.charAt(0) === '#') {//this element must be replcaed with Starting number  but starting number length shld match with display format hashes
           let validSingleStartingNumber = this.validateStartingNumberWithDisplayFormat(startingNumberControl, displayFormatSubStringElem);
 
-          if (validSingleStartingNumber != null) { //starting number is valid (that is matches display format length or less than display format length)
+          if (validSingleStartingNumber != null) {
 
             let displayFormatStringWithSingleHash = this.removeMulipleHashesToSingleHashInString(displayFormatControl);
-            vouchersArray = this.generateVouchersArrayReplaceHashWithVoucherNumber(displayFormatSubStringElem, startingNumberControl, validSingleStartingNumber, displayFormatStringWithSingleHash)
-            // console.log(vouchersArray);
-
+            let vouchersArray: string[] = this.generateVouchersArray(displayFormatSubStringElem, startingNumberControl, validSingleStartingNumber, displayFormatStringWithSingleHash)
+            console.log(vouchersArray);
           }//end of if()
-          else { //starting number is valid
-            console.error('starting number length should not exceed display format length');
-            // vouchersArray = [];
-          }
-
+          
         }
-      })
+      })//end of forEach();
 
-      // return vouchersArray;
-
-    } else { //(display format has valid substring of hashes ex- ab-###2-cd)
-      //!This condition should be removed************
-      // vouchersArray = [];
-      console.error('Invalid display format');
-      // return vouchersArray;
+      
     }
-
-    return vouchersArray;
-
+    else { //(display format has valid substring of hashes ex- ab-###2-cd)
+      //!This condition should be removed ************
+      console.log('Invalid display format');
+    }
   }
 
 
 
-
-
-  generateValidSequntialVouchers(): string[] {
-    let resultantVouchersArray: string[] = new Array<string>();
+  onClickOfSequentialGenerateVouchers2() {
     let displayFormatControl = this.signUpForm.get('displayformat').value;
     let startingNumberControl = +this.signUpForm.get('startingnumber').value;
     let resultantArray_ElementSplitedWithHiphen_DisplayFormat: string[] = displayFormatControl.split("-");
-    // console.log(resultantArray_ElementSplitedWithHiphen_DisplayFormat);
+    console.log(resultantArray_ElementSplitedWithHiphen_DisplayFormat);
 
     let countNumberOfSubStringContainingHashes: number = 0;
     let substringWithHashes: string = null;
@@ -221,12 +206,13 @@ export class AppComponent {
       if (isAllCharactersAreHashesInString) {
         console.warn('All characters in the string are hashes', substringWithHashes);
         //!this scenario already done
-        resultantVouchersArray = this.generateSequentialVouchersSeparatedWithHiphens();
-        console.log(resultantVouchersArray);
+        this.onClickOfSequentialGenerateVouchers();
 
       } else {
         console.log('some characters in the string are hashes', substringWithHashes);
-        //!now check if in this string in between any number or character exists other than hashes ex- ##f### , wd###ds###, etc , if so then this string would be invalid only valid strings r -> a####, ####b, a####b,  few#####23, ab-333####fnc-efef, 
+        //now check if in this string in between any number or character exists other than hashes
+        //ex- ##f### , wd###ds###, etc , if so then this string would be invalid
+        //only valid strings r -> a####, ####b, a####b,  few#####23, ab-333####fnc-efef, 
         let stratingIndexOfHash = substringWithHashes.indexOf('#');
         let endingIndexOfHash = substringWithHashes.lastIndexOf('#');
         console.log(stratingIndexOfHash, endingIndexOfHash);
@@ -236,51 +222,40 @@ export class AppComponent {
 
         let isAllCharactersAreHashesInStringOfSubString = this.checkAllSameHashCharacter(removedStartingCharAndEndingCharOfString);
         console.log(isAllCharactersAreHashesInStringOfSubString);
-
         if (isAllCharactersAreHashesInStringOfSubString) {//valid strings r -> a####, ####b, a####b,  few#####23, ab-333####fnc-efef, 
           console.warn('contains chara or number at end of hashes ex- a####, ###b, a23###cd ', substringWithHashes)
           console.log(resultantArray_ElementSplitedWithHiphen_DisplayFormat, substringWithHashes);
+          //check if numberofhashe character in substring is only one
+          if (stratingIndexOfHash === endingIndexOfHash) {//only one hash in substring (bcoz - both stratingIndexOfHash, endingIndexOfHash value would be same)
+            //ex- eef#eeg, #ef123, etc..
+            //!replace the single hash with vouhersArray
 
 
+            // this.generateVouchersArrayWithPreAndPostCharaAndNo(resultantArray_ElementSplitedWithHiphen_DisplayFormat, substringWithHashes, startingNumberControl)
 
-          for (let index = 0; index < resultantArray_ElementSplitedWithHiphen_DisplayFormat.length; index++) {
+          } else {//conatians 
 
-            if (resultantArray_ElementSplitedWithHiphen_DisplayFormat[index].search('#') !== -1) {
+            //!validate starting number length is same as numberofHashes (need to appendzero, wrong format)
+            let isValidStartingNumber: boolean = this.validateStartingNumberWithDisplayFormatHashesWithPreAndPostCharaAndNo(resultantArray_ElementSplitedWithHiphen_DisplayFormat, startingNumberControl);
 
-              let stratingIndexOfHash = resultantArray_ElementSplitedWithHiphen_DisplayFormat[index].indexOf('#');
-              let endingIndexOfHash = resultantArray_ElementSplitedWithHiphen_DisplayFormat[index].lastIndexOf('#');
-              let numberOfHashes = (endingIndexOfHash + 1) - stratingIndexOfHash;
+            console.log('isValidStartingNumber', isValidStartingNumber);
+            if (isValidStartingNumber) {
+              //!remove multiple hashes to single hash
+              let arrayConatiningSingleHash: string[] = this.removeMulipleHashesToSingleHashInStringWithPreAndPostCharaAndNo(resultantArray_ElementSplitedWithHiphen_DisplayFormat, substringWithHashes, startingNumberControl)
+
+              console.log('arrayConatiningSingleHash', arrayConatiningSingleHash);
+              //!replace the single hash with vouhersArray (generate vouchers array)
+              this.replaceSingleHashWithVouchersNumber(resultantArray_ElementSplitedWithHiphen_DisplayFormat, arrayConatiningSingleHash, startingNumberControl);
 
 
-              //!validate starting number length is same as numberofHashes (need to appendzero, wrong format)
-              let isValidStartingNumber: boolean =
-                this.validateStartingNumberWithDisplayFormatHashesWithPreAndPostCharaAndNo(startingNumberControl, numberOfHashes);
-
-              console.log('isValidStartingNumber', isValidStartingNumber);
-
-              if (isValidStartingNumber) {
-
-                //!remove multiple hashes to single hash
-                let displayFormatStringWithSingleHash: string =
-                  this.removeMulipleHashesToSingleHashInStringWithPreAndPostCharaAndNo(numberOfHashes);
-
-                console.log('*****');
-                console.log('displayFormatStringWithSingleHash', displayFormatStringWithSingleHash);
-
-                //!replace the single hash with vouhersArray (generate vouchers array)
-                resultantVouchersArray =
-                  this.generateVouchersArrayHashInStringWithPreAndPostCharaAndNo(startingNumberControl, displayFormatStringWithSingleHash, numberOfHashes)
-                console.log(resultantVouchersArray);
-
-              }
-              else {
-                console.error('Starting number length doesnot matches with display format hashes length, ex- ab####cd not eqaul starting num- 12345')
-              }
-
+            }
+            else {
+              console.error('Starting number length doesnot matches with display format hashes length, ex- ab####cd not eqaul starting num- 12345')
             }
 
 
-          }//end of for()
+          }
+
 
         } else {//invalid strings -> ##f### , wd###ds###, etc ,
           console.error('contains  character or number character in between hashes ex- ##f###');
@@ -292,25 +267,12 @@ export class AppComponent {
       console.error('contains multiple substring with hashes ex- ####-####');
     }
 
-    return resultantVouchersArray;
   }
 
 
+  removeMutlipeHashToSingleHash_ForInBetweenHashes = (charaArray, stratingIndexOfHash, endingIndexOfHash) => {
 
-
-  validateStartingNumberWithDisplayFormatHashesWithPreAndPostCharaAndNo(startingNumberControl, numberOfHashes): boolean {
-    if (startingNumberControl.toString().length <= numberOfHashes) {
-      return true;
-    } else {
-      return false;
-    }
-  }
-
-
-
-
-  removeMutlipeHashToSingleHash_ForInBetweenHashes = (charaArray, numberOfHashes): string[] => {
-
+    let numberOfHashes = (endingIndexOfHash + 1) - stratingIndexOfHash;
     let numberOfHashesToRemove = numberOfHashes - 1;
     let resultantCharArray: string[] = new Array<string>();
 
@@ -324,74 +286,147 @@ export class AppComponent {
       }
 
     }
-    return resultantCharArray;
+    return resultantCharArray
 
   }
 
-  removeMulipleHashesToSingleHashInStringWithPreAndPostCharaAndNo = (numberOfHashes): string => {
-    let displayFormatControl = this.signUpForm.get('displayformat').value;
-    let displayFormatArray_SplitWithHiphen: string[] = displayFormatControl.split("-");
 
-    for (let index = 0; index < displayFormatArray_SplitWithHiphen.length; index++) {
+
+
+  removeMulipleHashesToSingleHashInStringWithPreAndPostCharaAndNo = (resultantArray_ElementSplitedWithHiphen_DisplayFormat: string[], substringWithHashes, startingNumberControl) => {
+
+    for (let index = 0; index < resultantArray_ElementSplitedWithHiphen_DisplayFormat.length; index++) {
 
       //search which ever substring has hash init that should only do below operations
-      if (displayFormatArray_SplitWithHiphen[index].search('#') !== -1) {
+      if (resultantArray_ElementSplitedWithHiphen_DisplayFormat[index].search('#') !== -1) {
 
-        let charaArray = displayFormatArray_SplitWithHiphen[index].split("");
+        let stratingIndexOfHash = resultantArray_ElementSplitedWithHiphen_DisplayFormat[index].indexOf('#');
+        let endingIndexOfHash = resultantArray_ElementSplitedWithHiphen_DisplayFormat[index].lastIndexOf('#');
 
-        charaArray = this.removeMutlipeHashToSingleHash_ForInBetweenHashes(charaArray, numberOfHashes)
+        let charaArray = resultantArray_ElementSplitedWithHiphen_DisplayFormat[index].split("");
+        charaArray = this.removeMutlipeHashToSingleHash_ForInBetweenHashes(charaArray, stratingIndexOfHash, endingIndexOfHash)
         let stringWithOnlyOneHash = charaArray.join('');
-        displayFormatArray_SplitWithHiphen[index] = stringWithOnlyOneHash;
+        resultantArray_ElementSplitedWithHiphen_DisplayFormat[index] = stringWithOnlyOneHash;
       }
+
 
     }
+    console.log(resultantArray_ElementSplitedWithHiphen_DisplayFormat);
 
-    return displayFormatArray_SplitWithHiphen.join('-');
-
+    return resultantArray_ElementSplitedWithHiphen_DisplayFormat;
   }
 
 
-
-  generateVouchersArrayHashInStringWithPreAndPostCharaAndNo = (startingNumberControl, displayFormatStringWithSingleHash, numberOfHashes): string[] => {
-    let quantityVal = +this.signUpForm.get('quantity').value;
-    let incrementVal = +this.signUpForm.get('incrementby').value;
-    let validSingleStartingNumber: string = startingNumberControl;
+  validateStartingNumberWithDisplayFormatHashesWithPreAndPostCharaAndNo(resultantArray_ElementSplitedWithHiphen_DisplayFormat, startingNumberControl) {
 
 
-    let vouchersArray: string[] = new Array<string>();
-    let numberOfZeroesToBeAppendToVouchers: number = numberOfHashes - startingNumberControl.toString().length;
-    console.log('numberOfZeroesToBeAppendToVouchers', numberOfZeroesToBeAppendToVouchers);
+    for (let index = 0; index < resultantArray_ElementSplitedWithHiphen_DisplayFormat.length; index++) {
 
+      //search which ever substring has hash init that should only do below operations
+      if (resultantArray_ElementSplitedWithHiphen_DisplayFormat[index].search('#') !== -1) {
+        let stratingIndexOfHash = resultantArray_ElementSplitedWithHiphen_DisplayFormat[index].indexOf('#');
+        let endingIndexOfHash = resultantArray_ElementSplitedWithHiphen_DisplayFormat[index].lastIndexOf('#');
+        let numberOfHashes = (endingIndexOfHash + 1) - stratingIndexOfHash;
 
-    for (let index = 0; index < quantityVal; index++) {
-
-      if (numberOfZeroesToBeAppendToVouchers === 0) {
-        let eachVoucherNumber: string = validSingleStartingNumber + incrementVal * index;
-
-        if (eachVoucherNumber.toString().length == numberOfHashes) {//if display format is ab###cd and starting number 999 then increment by 1-> 1000 which means starting number is exceeding the length of display format
-          // console.log('====', displayFormatStringWithSingleHash.replace('#', eachVoucherNumber.toString()));
-          vouchersArray.push(displayFormatStringWithSingleHash.replace('#', eachVoucherNumber.toString()))
+        if (startingNumberControl.toString().length <= numberOfHashes) {
+          return true;
         } else {
-          console.error('while generating vouchers the length of voucher number exceeded the display format');
-          break;
+          return false;
         }
 
-      }
-      else if (numberOfZeroesToBeAppendToVouchers > 0) {
 
-        let eachVoucherNumber: number = +validSingleStartingNumber + incrementVal * index; //validSingleStartingNumber -> number
-        let eachVoucherNumberString: string = eachVoucherNumber.toString();
-        let vouchersNumberWithAppendedZeroes = eachVoucherNumberString.padStart(numberOfHashes, '0');
-        // console.log('****', displayFormatStringWithSingleHash.replace('#', vouchersNumberWithAppendedZeroes));
-        vouchersArray.push(displayFormatStringWithSingleHash.replace('#', vouchersNumberWithAppendedZeroes));
       }
-    } //end of for()
+    }
 
-    return vouchersArray;
   }
 
 
+  replaceSingleHashWithVouchersNumber(resultantArray_ElementSplitedWithHiphen_DisplayFormat: string[], arrayConatiningSingleHash: string[], startingNumberControl) {
 
+
+    let quantityVal = +this.signUpForm.get('quantity').value;
+    let incrementVal = +this.signUpForm.get('incrementby').value;
+    let displayFormatControl = this.signUpForm.get('displayformat').value;
+    let resultantArray_ElementSplitedWithHiphen_DisplayFormat2: string[] = displayFormatControl.split("-");
+
+    console.log(resultantArray_ElementSplitedWithHiphen_DisplayFormat2);
+    console.log(arrayConatiningSingleHash);
+
+    let vouchersArray: string[] = new Array<string>();
+
+
+    for (let index = 0; index < arrayConatiningSingleHash.length; index++) {
+
+      // let numberOfZeroesToBeAppendToVouchers: number = resultantArray_ElementSplitedWithHiphen_DisplayFormat.length - startingNumberControl.toString().length;
+
+
+      //search which ever substring has hash init that should only do below operations
+      if (arrayConatiningSingleHash[index].search('#') !== -1) {
+
+
+        let stratingIndexOfHash = resultantArray_ElementSplitedWithHiphen_DisplayFormat2[index].indexOf('#');
+        let endingIndexOfHash = resultantArray_ElementSplitedWithHiphen_DisplayFormat2[index].lastIndexOf('#');
+        let numberOfHashes = (endingIndexOfHash + 1) - stratingIndexOfHash;
+        let numberOfZeroesToBeAppendToVouchers: number = numberOfHashes - startingNumberControl.toString().length;
+
+        // if (startingNumberControl.toString().length === numberOfHashes) {
+        for (let j = 0; j < quantityVal; j++) {
+
+          if (numberOfZeroesToBeAppendToVouchers === 0) {
+            // console.log('starting number length matches with number of hashes');
+
+            let eachVoucherNumber: string = startingNumberControl + incrementVal * j;
+
+            console.log('====', arrayConatiningSingleHash[j].replace('#', eachVoucherNumber.toString()));
+            vouchersArray.push(arrayConatiningSingleHash[j].replace('#', eachVoucherNumber.toString()))
+
+
+
+          } else if (numberOfZeroesToBeAppendToVouchers > 0) {
+            // console.log('need to append zero');
+            let eachVoucherNumber: number = +startingNumberControl + incrementVal * j;
+            let eachVoucherNumberString: string = eachVoucherNumber.toString();
+            let vouchersNumberWithAppendedZeroes = eachVoucherNumberString.padStart(2, '0');
+            vouchersArray.push(arrayConatiningSingleHash[j].replace('#', eachVoucherNumber.toString()))
+          }
+
+
+        }
+
+        /*  } else if (startingNumberControl.toString().length < numberOfHashes) {
+           console.log('need to append zero');
+ 
+         } */
+
+
+      }
+    }
+
+  }
+
+  /*  generateVouchersArrayWithPreAndPostCharaAndNo =
+     (resultantArray_ElementSplitedWithHiphen_DisplayFormat, substringWithHashes, startingNumberControl) => {
+       let quantityVal = +this.signUpForm.get('quantity').value;
+       let incrementVal = +this.signUpForm.get('incrementby').value;
+   
+       if (startingNumberControl.toString().length === 1) {
+   
+         let vouchersArray: string[] = new Array<string>();
+   
+         resultantArray_ElementSplitedWithHiphen_DisplayFormat.forEach(substringEleme => {
+   
+           for (let index = 0; index < quantityVal; index++) {
+             let eachVoucherNumber: string = startingNumberControl + incrementVal * index;//validSingleStartingNumber-> string  ('12'+2*3)-> "126"
+             vouchersArray.push(substringEleme.replace('#', eachVoucherNumber.toString()))
+           }//end of for loop
+         })
+   
+       }
+       else {
+         console.error('starting number range does not match with display format #')
+       }
+   
+     } */
 
 
 
